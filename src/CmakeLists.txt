@@ -1,0 +1,92 @@
+# add_library(common STATIC box.cu
+#                    box.h
+#                    receptor.h
+#                    receptor.cu
+#                    vec3.h
+#                    ray.h
+#                    wall.cu
+#                    wall.h
+#                    parameters.h
+#                    read_map.h
+#                    read_map.cu
+#                    utils/interpolate_directivity.h
+#                    utils/interpolate_directivity.cu
+#                    utils/cudaHelpers.h
+#                    cudaStructs/cuda3DMatrix.h
+#                    cudaStructs/cudaStack.h
+#                    cudaStructs/cudaPair.h)
+
+
+# set_target_properties(common PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+
+# set_directory_properties( PROPERTIES COMPILE_DEFINITIONS "" )
+
+# cuda_add_executable(RayTracerSim main.cu
+#                             serial_simulation.h
+#                             serial_simulation.cu)
+
+# target_compile_definitions(RayTracerSim PUBLIC BUILD_SERIAL)
+
+# add_executable(RayTracerSimCUDA main.cu
+#                                 kernel.cuh
+#                                 kernel.cu)
+
+# target_compile_definitions(RayTracerSimCUDA PUBLIC BUILD_CUDA)
+# target_link_libraries(RayTracerSimCUDA PUBLIC common)
+
+# set_target_properties(RayTracerSim PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+
+# if(BUILD_CUDA)
+# add_executable(RayTracerSimCUDA main.cu
+#                                 box.cu
+#                                 box.h
+#                                 receptor.h
+#                                 receptor.cu
+#                                 vec3.h
+#                                 ray.h
+#                                 wall.cu
+#                                 wall.h
+#                                 kernel.cuh
+#                                 kernel.cu
+#                                 parameters.h
+#                                 read_map.h
+#                                 read_map.cu
+#                                 serial_simulation.h
+#                                 serial_simulation.cu
+#                                 utils/interpolate_directivity.h
+#                                 utils/interpolate_directivity.cu
+#                                 utils/cudaHelpers.h
+#                                 cudaStructs/cuda3DMatrix.h
+#                                 cudaStructs/cudaStack.h
+#                                 cudaStructs/cudaPair.h)
+
+# set_target_properties(RayTracerSimCUDA PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+# target_compile_definitions(RayTracerSimCUDA PUBLIC BUILD_CUDA)
+# endif()
+
+# if(BUILD_SERIAL)
+add_executable(RayTracerSim 
+                            box.cu
+                            box.h
+                            receptor.h
+                            receptor.cu
+                            vec3.h
+                            ray.h
+                            wall.cu
+                            wall.h
+                            kernel.cuh
+                            kernel.cu
+                            parameters.h
+                            read_map.h
+                            read_map.cu
+                            serial_simulation.h
+                            serial_simulation.cu
+                            utils/interpolate_directivity.h
+                            utils/interpolate_directivity.cu
+                            cudaStructs/cuda3DMatrix.h
+                            cudaStructs/cudaStack.h
+                            cudaStructs/cudaPair.h
+                            main.cu)
+
+# target_compile_definitions(RayTracerSim PUBLIC BUILD_SERIAL)
+# endif()

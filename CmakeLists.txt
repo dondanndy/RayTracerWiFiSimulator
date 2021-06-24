@@ -1,0 +1,9 @@
+cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
+project(RayTracingSimulator LANGUAGES CXX CUDA)
+
+set(BUILD_SERIAL ON)
+set(BUILD_CUDA ON)
+
+add_subdirectory(src)
+
+set_target_properties(RayTracerSim PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
