@@ -1,10 +1,14 @@
 #pragma once
 
 #include "cuda_runtime.h"
-#include <string>
 
 template<typename T>
-struct cuda3DMatrix {
+class cuda3DMatrix {
+/*
+	Structure to hold the data of a 3D Matrix.
+	The intended use is to be able to allocate all the data at once in a malloc call and then, using the
+	available methods in this class, access that data as if it had a 3D structure.
+*/
 private:
 	size_t rows;
 	size_t cols;
@@ -37,6 +41,9 @@ public:
 	}
 
 	__host__ __device__ cuda3DMatrix<T> slice_2D() {
+		/*
+			Information for a 2D slice of the 3D matrix.
+		*/
 		return cuda3DMatrix<T>(rows, cols, 1);
 	}
 };

@@ -10,7 +10,9 @@
 
 
 class Receptor {
-	//Receptor as a Sphere
+	/*
+		Class to modelize a Receptor (antenna). It is modelized as a sphere that can have some orientation offset from the cartesian axes.
+	*/
 private:
 	point3 origin;
 	float radius;

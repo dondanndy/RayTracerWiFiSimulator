@@ -4,6 +4,12 @@
 #include "parameters.h"
 
 class Ray {
+    /*
+        Class to modelize a ray. It is just a straight line with an origin and a vector that indicates its direction.
+
+        Being a electromagnetic ray, it also has an initial power at its origin.
+    */
+
 private:
     point3 orig;
     vec3 dir;

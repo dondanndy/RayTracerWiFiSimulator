@@ -14,6 +14,12 @@
 #include "cudaStructs/cudaPair.h"
 #include "cudaStructs/cuda3DMatrix.h"
 
+/*
+	Functions to run the simulation as usual in the cpu.
+
+	That means a double loop to cover the full range of angles to run on the cpu.
+*/
+
 
 void run_serial_simulation(const std::vector<Wall>& map, const std::vector<Receptor>& receptors,
 	                       float* antenna_pattern, cuda3DMatrix<float> antenna_pattern_props,
@@ -22,5 +28,3 @@ void run_serial_simulation(const std::vector<Wall>& map, const std::vector<Recep
 void run_ray(const Ray& r, const std::vector<Wall>& map, const std::vector<Receptor>& tx,
 	         float* data, cuda3DMatrix<float> data_prop,
 	         float* directivity, cuda3DMatrix<float> directivity_prop);
-
-bool read_antenna_pattern(const std::string& filename, float* data);

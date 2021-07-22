@@ -4,7 +4,7 @@
 #include <iostream>
 
 template <typename T>
-struct cudaStack {
+class cudaStack {
 	//Device implementation of a stack.
 private:
 	T* data;

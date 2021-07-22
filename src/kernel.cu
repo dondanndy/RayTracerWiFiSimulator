@@ -53,7 +53,7 @@ void setup_and_run_CUDA_simulation(std::vector<Wall>& map, std::vector<Receptor>
 	size_t block_mem =  MAX_REBOUND * receptors.size() * ANGLE_LIMIT * ANGLE_LIMIT * sizeof(float);
 
 	//--------------------------------------------
-	// KERNEL
+	// KERNEL LAUNCH
 	//--------------------------------------------
 	std::cout << "Launching kernel!\n";
 	point3 origin(-1.0, -4.0, 0.7);
@@ -70,7 +70,7 @@ void setup_and_run_CUDA_simulation(std::vector<Wall>& map, std::vector<Receptor>
 	std::cout << "Kernel ended!\n";
 
 	//--------------------------------------------
-	// DATA RETRIEVE
+	// DATA RETRIEVAL
 	//--------------------------------------------
 
 	//Results from each block
@@ -83,7 +83,7 @@ void setup_and_run_CUDA_simulation(std::vector<Wall>& map, std::vector<Receptor>
 	cuda3DMatrix<float> acc_data_props = full_data_props.slice_2D();
 	float* acc_data = (float*)malloc(acc_data_props.size());
 
-	//Accumulate
+	//Accumulate 3D array into 2D array
 	for (size_t i = 0; i < full_data_props.nrows(); i++) {
 		for (size_t j = 0; j < full_data_props.ncols(); j++) {
 			acc_data_props.at(acc_data, i, j) = 0.0;
@@ -95,7 +95,7 @@ void setup_and_run_CUDA_simulation(std::vector<Wall>& map, std::vector<Receptor>
 		}
 	}
 
-	//Accumulate results from every block.
+	//Accumulate results from every block, a 2D array into a 1D vector as the results of the simulation.
 	for (size_t i = 0; i < acc_data_props.nrows(); i++) {
 		results[i] = 0.0;
 		for (size_t j = 0; j < acc_data_props.ncols(); j++) {
@@ -153,35 +153,12 @@ __global__ void run_simulation(point3 origin, Wall* map, size_t map_size,
 
 			__syncthreads();
 
-			fill_block_data(0.0, block_data, block_data_props);
+			fill_3D_matrix(0.0, block_data, block_data_props);
 
 			limy += ang_step * 4.0;
 		}
 
 		limx += ang_step * 4.0;
-	}
-
-	//printf("Finished, tid = %d\n", blockId);
-}
-
-__device__ void fill_block_data(float val, float* data, cuda3DMatrix<float> data_props)
-{
-	//We slice the 3D array so every thread select a position on the 2D structure and set
-	//every value on the z (depth) axis.
-
-	size_t nx = 0;
-	while (nx < data_props.nrows()){
-		size_t ny = 0;
-		while (ny < data_props.ncols()) {
-			if ((threadIdx.x + nx < data_props.nrows()) && (threadIdx.y + ny < data_props.ncols())) {
-				for (size_t k = 0; k < data_props.ndepth(); k++) {
-					data_props.at(data, threadIdx.y + ny, threadIdx.x + nx, k) = val;
-				}
-			}
-			ny += blockDim.y;
-		}
-		
-		nx += blockDim.x;
 	}
 }
 
@@ -191,7 +168,6 @@ __device__ void run_ray(Ray r, Wall* map, size_t map_size,
 	                    float* directivity, cuda3DMatrix<float> directivity_prop)
 {
 	cudaStack<cudaPair<Ray, unsigned int>> ray_stack(MAX_STACK_VALUES);
-	//printf("running ray\n");
 
 	cudaPair<Ray, unsigned int> ray(r, 0); //Ray to evaluate.
 
@@ -210,7 +186,6 @@ __device__ void run_ray(Ray r, Wall* map, size_t map_size,
 				if (dist < hit_dist) {
 					hit_dist = dist;
 					wall_hit = j;
-					//printf("dist = %.3f, power = %e\n", dist, power);
 				}
 			}
 		}
@@ -234,9 +209,31 @@ __device__ void run_ray(Ray r, Wall* map, size_t map_size,
 			ray = cudaPair<Ray, unsigned int>(reflected_ray, ray.second() + 1);
 		}
 		else {
+			//We will keep evaluating rays until the stack is empty.
 			more_rays = ray_stack.pop(ray);
 		}
 	} while (more_rays);
+}
+
+__device__ void fill_3D_matrix(float val, float* data, cuda3DMatrix<float> data_props)
+{
+	//We slice the 3D array so every thread select a position on the 2D structure and set
+	//every value on the z (depth) axis.
+
+	size_t nx = 0;
+	while (nx < data_props.nrows()) {
+		size_t ny = 0;
+		while (ny < data_props.ncols()) {
+			if ((threadIdx.x + nx < data_props.nrows()) && (threadIdx.y + ny < data_props.ncols())) {
+				for (size_t k = 0; k < data_props.ndepth(); k++) {
+					data_props.at(data, threadIdx.y + ny, threadIdx.x + nx, k) = val;
+				}
+			}
+			ny += blockDim.y;
+		}
+
+		nx += blockDim.x;
+	}
 }
 
 __device__ void accumulate_block_data(float* full_data, cuda3DMatrix<float> full_data_prop,

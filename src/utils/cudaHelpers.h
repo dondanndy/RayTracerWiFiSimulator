@@ -4,6 +4,17 @@
 #include "cuda_runtime.h"
 #include <iostream>
 
+/*
+    This file contains some helpers functions to ease the use of the CUDA APIs.
+
+    These functions focus on the data movement from the host to the device and viceversa.
+
+    In all cases, the src pointer refers to the data in the host (cpu RAM) and the gpu_data
+    refers to the data in the device (GPU memory).
+*/
+
+// Base functons, only allocation and copying vectors and 3D matrices.
+
 template<typename T>
 cudaError_t alloc_in_gpu(T** gpu_ptr, cuda3DMatrix<T> prop) {
     return cudaMalloc((void**)gpu_ptr, prop.size());
@@ -23,6 +34,8 @@ template<typename T>
 cudaError_t copy_from_gpu(T* src, T* gpu, cuda3DMatrix<T> prop) {
     return cudaMemcpy((void*)src, (void*)gpu, prop.size(), cudaMemcpyDeviceToHost);
 }
+
+// Compound functons, combining allocation and data movement.
 
 template<typename T>
 T* alloc_and_copy_to_gpu(T* src, cuda3DMatrix<T> prop) {

@@ -101,7 +101,7 @@ void run_ray(const Ray& r, const std::vector<Wall>& map, const std::vector<Recep
 			map[wall_hit].get_hit_rays(ray.first().direction(), ray.first().at(hit_dist), power, reflected_ray, transmitted_ray);
 
 			//TODO: smth similar to emplace_back.
-			ray_stack.add(cudaPair<Ray, unsigned int>(transmitted_ray, reb + 1));
+			ray_stack.add(cudaPair<Ray, unsigned int>(transmitted_ray, reb));
 			ray = cudaPair<Ray, unsigned int>(reflected_ray, reb + 1);
 		}
 		else {

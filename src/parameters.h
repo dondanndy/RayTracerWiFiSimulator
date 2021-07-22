@@ -14,9 +14,8 @@ constexpr size_t pow_const(size_t base, size_t exp) {
 	return res;
 }
 
-//No constexpr pow :(
 constexpr size_t MAX_REBOUND = 5;
-constexpr size_t MAX_STACK_VALUES = pow_const(2, MAX_REBOUND+1) - MAX_REBOUND + 2;
+constexpr size_t MAX_STACK_VALUES = pow_const(2, MAX_REBOUND+1) - MAX_REBOUND + 2; //Max number of elements in the ray stack.
 
 constexpr float CUTOFF_POWER = 1e-12;
 constexpr float EMITTING_POWER = 0.1; //Watts

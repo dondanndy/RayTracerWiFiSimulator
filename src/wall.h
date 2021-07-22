@@ -4,6 +4,12 @@
 #include <cmath>
 
 class Wall {
+    /*
+        Class to modelize a wall. It will just be a plane, so we would just need a normal.
+
+        Each wall is defined by its 4 corners and the dielectrical permitivity for its interactions with the rays.
+    */
+
 public:
     point3 limits[4];
     vec3 normal;
